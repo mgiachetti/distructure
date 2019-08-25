@@ -1,9 +1,153 @@
 <!DOCTYPE html>
 <html>
+
 <head>
+  <style>
+    body {
+      width: 100vw;
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      background-color: #1e1e1e;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: row;
+      flex: 1;
+      height: 100%;
+      padding: 10px;
+      box-sizing: border-box;
+    }
+
+    #editor {
+      height: 100%;
+      width: 400px;
+      margin-right: 10px;
+    }
+
+    .canvas-container {
+      display: flex;
+      flex: 1;
+      flex-direction: row;
+      max-height: 100%;
+      overflow-y: scroll;
+    }
+
+    canvas {
+      width: 100%;
+      display: flex;
+    }
+  </style>
 </head>
+
 <body>
-<canvas id="canvas" width="1800" height="1600">
-<script src="js/app.js"> </script>
+  <div class="container">
+    <div id="editor"></div>
+    <div class="canvas-container">
+      <canvas id="canvas"></canvas>
+    </div>
+  </div>
+  <script src="https://pagecdn.io/lib/ace/1.4.5/ace.js" integrity="sha256-5Xkhn3k/1rbXB+Q/DX/2RuAtaB4dRRyQvMs83prFjpM="
+    crossorigin="anonymous"></script>
+  <script src="js/app.js"> </script>
+  <script>
+    const code =
+      `BEGIN
+  IF x < 10
+    console.log('sarasa')
+    TAG B
+    x=2
+    y=1
+  ELSE
+    alalall
+    FUNCTION jajwioqioqoiq
+    CIN x2
+    COUT y
+    FOR i <-- 1 to 10
+      FUNCTION aajja(a, x)
+    END
+    UNTIL i <-- 1 to 10
+      FUNCTION aajja(a, x)
+    END
+    SWITCH type
+      CASE Integer
+        FUNCTION parseInt(x)
+      CASE Float
+        FUNCTION parseFloat(x)
+      CASE String
+        console.log(x)
+    END
+  END
+END
+`;
+
+    const customRules = {
+      start: [
+        {
+          regex: /BEGIN/,
+          token: 'begin',
+          next: 'start',
+        },
+      ],
+      otherRulesBlock: [
+        {
+          regex: /^ \+/,
+          token: 'keyword',
+          next: 'otherRulesBlock',
+        },
+        // { ... }
+      ],
+    };
+
+    // This only defines high-level behaviour of the Mode like folding etc.
+    ace.define('ace/mode/custom', [
+      'require', 'exports', 'ace/lib/oop', 'ace/mode/text', 'ace/mode/custom_highlight_rules'], (acequire, exports) => {
+        const oop = acequire('ace/lib/oop');
+        const TextMode = acequire('ace/mode/text').Mode;
+        const CustomHighlightRules = acequire('ace/mode/custom_highlight_rules').CustomHighlightRules;
+
+        oop.inherits(Mode, TextMode); // ACE's way of doing inheritance
+
+        exports.Mode = Mode; // eslint-disable-line no-param-reassign
+      });
+
+    // This is where we really create the highlighting rules
+    ace.define('ace/mode/custom_highlight_rules', ['require', 'exports', 'ace/lib/oop', 'ace/mode/text_highlight_rules'], (acequire, exports) => {
+      const oop = acequire('ace/lib/oop');
+      const TextHighlightRules = acequire('ace/mode/text_highlight_rules').TextHighlightRules;
+
+      const CustomHighlightRules = function CustomHighlightRules() {
+        this.$rules = [].concat(
+          new TextHighlightRules().getRules(), // Use Text's rules as a base
+          customRules,
+        );
+      };
+
+      oop.inherits(CustomHighlightRules, TextHighlightRules);
+
+      exports.CustomHighlightRules = CustomHighlightRules;
+    });
+
+    var editor = ace.edit("editor");
+    editor.setValue(code);
+    editor.setTheme("ace/theme/monokai");
+    editor.session.setOptions({ tabSize: 2, useSoftTabs: true });
+    editor.session.setMode("ace/mode/custom_highlight_rules");
+
+    let prevCode = null;
+    setInterval(() => {
+      const code = editor.getValue();
+      if (code === prevCode) {
+        return;
+      }
+      prevCode = code;
+      render(code);
+    }, 500);
+  </script>
+
+
 </body>
+
 </html>
