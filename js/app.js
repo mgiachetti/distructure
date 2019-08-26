@@ -11,12 +11,11 @@ Distructure.If = function (condition, ifBlock, elseBlock) {
   this.left = ifBlock;
   this.right = elseBlock;
   this.text = condition;
-  this.ROOF_HEIGHT = 100;
-  this.SEP = 20;
-  this.BASE_LINE = 5;
-  this.NO_ELSE_WIDTH = 100;
+  this.ROOF_HEIGHT = 50;
+  this.SEP = 10;
+  this.BASE_LINE = 2.5;
+  this.NO_ELSE_WIDTH = 50;
 }
-
 Distructure.If.prototype = {
   className: "If",
   render: function (ctx) {
@@ -27,7 +26,6 @@ Distructure.If.prototype = {
     var w2 = w / 2;
     var sep = this.SEP;
     var l = this.left.width(ctx) + 2 * sep;
-
 
     ctx.moveTo(0, r);
     ctx.lineTo(w2, 0);
@@ -90,13 +88,12 @@ Distructure.Switch = function (condition, cases, defaultBlock) {
   this.text = condition;
   this.cases = cases || [];
   this.defaultBlock = defaultBlock;
-  this.BASE_LINE = 5;
-  this.ROOF_HEIGHT = 70;
-  this.CONDITION_HEIGHT = 30;
-  this.SEP = 20;
-  this.NO_DEFAULT_WIDTH = 100;
+  this.BASE_LINE = 2.5;
+  this.ROOF_HEIGHT = 35;
+  this.CONDITION_SEP = 3;
+  this.SEP = 10;
+  this.NO_DEFAULT_WIDTH = 50;
 }
-
 Distructure.Switch.prototype = {
   className: "Switch",
   render: function (ctx) {
@@ -104,7 +101,7 @@ Distructure.Switch.prototype = {
     var w = this.width(ctx);
     var h = this.height(ctx);
     var r = this.ROOF_HEIGHT;
-    var ch = this.CONDITION_HEIGHT;
+    var ch = fontHeight + 2 * this.CONDITION_SEP;
     var w2 = w / 2;
     var sep = this.SEP;
 
@@ -133,7 +130,6 @@ Distructure.Switch.prototype = {
 
       x += dx;
     };
-
 
     if (!this.defaultBlock) {
       //empty default
@@ -186,7 +182,7 @@ Distructure.Switch.prototype = {
     };
 
     if (this.cases.length) {
-      h += this.CONDITION_HEIGHT;
+      h += fontHeight + 2 * this.CONDITION_SEP;
     }
 
     return this._height = h + this.ROOF_HEIGHT + 2 * this.SEP;
@@ -196,17 +192,16 @@ Distructure.Switch.prototype = {
 Distructure.For = function (condition, block) {
   this.block = block;
   this.text = condition;
-  this.ROOF_HEIGHT = 30;
-  this.SEP = 20;
+  this.ROOF_SEP = 3;
+  this.SEP = 10;
 }
-
 Distructure.For.prototype = {
   className: "For",
   render: function (ctx) {
 
     var w = this.width(ctx);
     var h = this.height(ctx);
-    var r = this.ROOF_HEIGHT;
+    var r = fontHeight + 2 * this.ROOF_SEP;
     var sep = this.SEP;
 
     ctx.moveTo(w, r);
@@ -235,7 +230,8 @@ Distructure.For.prototype = {
   height: function (ctx) {
     if (this._height) return this._height;
 
-    return this._height = this.block.height(ctx) + this.ROOF_HEIGHT + 2 * this.SEP;
+    const roofHeight = fontHeight + 2 * this.ROOF_SEP;
+    return this._height = this.block.height(ctx) + roofHeight + 2 * this.SEP;
   }
 }
 
@@ -245,18 +241,17 @@ Distructure.While.prototype = Distructure.For.prototype;
 Distructure.Until = function (condition, block) {
   this.block = block;
   this.text = condition;
-  this.ROOF_HEIGHT = 30;
-  this.SEP = 20;
+  this.ROOF_SEP = 3;
+  this.SEP = 10;
 }
-
 Distructure.Until.prototype = {
   className: "Until",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
-    var r = this.ROOF_HEIGHT;
-    var sep = this.SEP;
+    const w = this.width(ctx);
+    const h = this.height(ctx);
+    const r = fontHeight + 2 * this.ROOF_SEP;
+    const sep = this.SEP;
 
     ctx.moveTo(w, h - r);
     ctx.lineTo(0, h - r);
@@ -284,21 +279,22 @@ Distructure.Until.prototype = {
   height: function (ctx) {
     if (this._height) return this._height;
 
-    return this._height = this.block.height(ctx) + this.ROOF_HEIGHT + 2 * this.SEP;
+    const r = fontHeight + 2 * this.ROOF_SEP;
+    return this._height = this.block.height(ctx) + r + 2 * this.SEP;
   }
 }
 
 Distructure.Tag = function (text) {
   this.text = text;
-  this.SEP = 14;
+  this.SEP = 7;
 }
 
 Distructure.Tag.prototype = {
   className: "Tag",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
+    const w = this.width(ctx);
+    const h = this.height(ctx);
 
     ctx.beginPath();
     ctx.arc(w / 2, h / 2, w / 2 - 2, 0, 2 * Math.PI);
@@ -349,8 +345,8 @@ Distructure.Instruction.prototype = {
   className: "Instruction",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
+    const w = this.width(ctx);
+    const h = this.height(ctx);
 
     ctx.strokeRect(0, 0, w, h)
 
@@ -362,7 +358,6 @@ Distructure.Instruction.prototype = {
   width: function (ctx) {
     if (this._width && this._ctx_width == ctx) return this._width;
     this._ctx_width = ctx;
-    console.log(`${this.text}: ${ctx.measureText(this.text).width}`);
     return this._width = ctx.measureText(this.text).width + 2 * this.SEP;
   },
   height: function (ctx) {
@@ -486,10 +481,23 @@ Distructure.Cout.prototype = {
   }
 }
 
+Distructure.EmptyLine = function () {
+  this.SEP = 5;
+}
+Distructure.EmptyLine.prototype = {
+  className: "EmptyLine",
+  render: function () { },
+  width: function (ctx) {
+    return this.height();
+  },
+  height: function (ctx) {
+    return this._height = fontHeight + 2 * this.SEP;
+  }
+}
+
 Distructure.Block = function (children) {
   this.children = children || [];
 }
-
 Distructure.Block.prototype = {
   className: "Block",
   render: function (ctx) {
@@ -571,9 +579,8 @@ Distructure.Block.prototype = {
 
 function parse(codeBlock) {
   let stack = [];
-  let currentBlock = null;
+  let currentBlock = new Distructure.Block();
   function push(block) {
-    console.log(`PUSH: ${currentBlock.className} entra ${block}`);
     if (currentBlock) {
       stack.push(currentBlock);
     }
@@ -612,14 +619,14 @@ function parse(codeBlock) {
         const newBlock = new Distructure.Block();
         add(new Distructure.Main(newBlock));
         push(newBlock);
+      } else if (line.match(/^END$/i)) {
+        // end
+        pop();
       } else if (line.match(/^IF /i)) {
         const newBlock = new Distructure.Block();
         const condition = line.slice(3);
         add(new Distructure.If(condition, newBlock));
         push(newBlock);
-      } else if (line.match(/^END$/i)) {
-        // end
-        pop();
       } else if (line.match(/^ELSE$/i)) {
         // end IF block
         pop();
@@ -632,11 +639,19 @@ function parse(codeBlock) {
         const condition = line.slice(4);
         add(new Distructure.For(condition, newBlock));
         push(newBlock);
-      } else if (line.match(/^UNTIL /i)) {
+      } else if (line.match(/^WHILE /i)) {
         const newBlock = new Distructure.Block();
         const condition = line.slice(6);
-        add(new Distructure.Until(condition, newBlock));
+        add(new Distructure.While(condition, newBlock));
         push(newBlock);
+      } else if (line.match(/^REPEAT$/i)) {
+        const newBlock = new Distructure.Block();
+        push(newBlock);
+      } else if (line.match(/^UNTIL /i)) {
+        const condition = line.slice(6);
+        const repeatBlock = currentBlock;
+        pop();
+        add(new Distructure.Until(condition, repeatBlock));
       } else if (line.match(/^SWITCH /i)) {
         const condition = line.slice(7);
         add(new Distructure.Switch(condition));
@@ -662,9 +677,13 @@ function parse(codeBlock) {
       } else if (line.match(/^COUT /i)) {
         add(new Distructure.Cout(line.slice(5)));
       } else if (line.match(/^FUNCTION /i)) {
-        add(new Distructure.Function(line.slice(8)));
+        add(new Distructure.Function(line.slice(9)));
       } else if (line.match(/^TAG /i)) {
         add(new Distructure.Tag(line.slice(4)));
+      } else if (line.match(/^RETURN$/i)) {
+        add(new Distructure.Tag('R'));
+      } else if (line.match(/^(BLANK|NEWLINE)$/i)) {
+        add(new Distructure.EmptyLine());
       } else {
         // default use Instruction
         add(new Distructure.Instruction(line));
@@ -679,35 +698,59 @@ function render(code) {
 
   var dpr = window.devicePixelRatio || 1;
   var rect = canvas.getBoundingClientRect();
-  var cw = rect.width;
+  var cw = Math.ceil(rect.width);
   // var ch = elem.height(ctx);
-  var ch = rect.height;
-  canvas.style.width = `${rect.width}px`;
+  var ch = Math.ceil(rect.height);
+  canvas.style.width = `${cw}px`;
   canvas.style.height = `${ch}px`;
-  canvas.width = rect.width * dpr;
+  canvas.width = cw * dpr;
   canvas.height = ch * dpr;
   const ctx = canvas.getContext('2d');
-  ctx.scale(dpr * 0.5, dpr * 0.5);
+  const margin = 10;
+  const darkMode = true;
 
   //clear canvas
-  // ctx.fillStyle = "white";
-  ctx.fillStyle = "#1e1e1e";
-  ctx.fillRect(0, 0, cw, ch);
+  if (darkMode) {
+    ctx.fillStyle = "#1e1e1e";
+  } else {
+    ctx.fillStyle = "white";
+  }
+  ctx.fillRect(0, 0, cw * dpr, ch * dpr);
 
-  //if
-  // ctx.strokeStyle = "1px black";
-  // ctx.fillStyle = "black";
-  ctx.lineWidht = 1;
-  ctx.strokeStyle = "#d4d4d4";
-  ctx.fillStyle = "#d4d4d4";
+  ctx.scale(dpr, dpr);
+  ctx.translate(margin, margin);
+
+  if (darkMode) {
+    ctx.strokeStyle = "#d4d4d4";
+    ctx.fillStyle = "#d4d4d4";
+  } else {
+    ctx.strokeStyle = "black";
+    ctx.fillStyle = "black";
+  }
+
+  ctx.lineWidth = 1;
   ctx.textAlign = "center";
-  ctx.font = "30px Courier New";
+  ctx.font = "14px Courier New";
 
   fontHeight = getTextHeight(ctx);
 
+  const elemWidth = Math.ceil(elem.width(ctx) + 2 * margin);
+  const elemHeight = Math.ceil(elem.height(ctx) + 2 * margin);
+
+  if (elemWidth !== cw || elemHeight !== ch) {
+    // increase canvas size
+    const newWidth = elemWidth;
+    const newHeight = elemHeight;
+    canvas.style['min-width'] = `${newWidth}px`;
+    canvas.style['min-height'] = `${newHeight}px`;
+    canvas.style['max-width'] = `${newWidth}px`;
+    canvas.style['max-height'] = `${newHeight}px`;
+    render(code);
+    return;
+  }
+
   elem.render(ctx);
 }
-
 
 var getTextHeight = function (ctx) {
   var font = ctx.font;
