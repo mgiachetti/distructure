@@ -1,11 +1,10 @@
 //(function(){
 "use strict"
 
-var canvas = document.getElementById('canvas');
-// var ctx = canvas.getContext('2d');;
-var fontHeight = 0;
+const canvas = document.getElementById('canvas');
+let fontHeight = 0;
 
-var Distructure = window.Distructure = {};
+const Distructure = window.Distructure = {};
 
 Distructure.If = function (condition, ifBlock, elseBlock) {
   this.left = ifBlock;
@@ -20,12 +19,12 @@ Distructure.If.prototype = {
   className: "If",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
-    var r = this.ROOF_HEIGHT;
-    var w2 = w / 2;
-    var sep = this.SEP;
-    var l = this.left.width(ctx) + 2 * sep;
+    const w = this.width(ctx);
+    const h = this.height(ctx);
+    const r = this.ROOF_HEIGHT;
+    const w2 = w / 2;
+    const sep = this.SEP;
+    const l = this.left.width(ctx) + 2 * sep;
 
     ctx.moveTo(0, r);
     ctx.lineTo(w2, 0);
@@ -64,18 +63,20 @@ Distructure.If.prototype = {
   width: function (ctx) {
     if (this._width) return this._width;
 
-    var l = this.left.width(ctx) + 2 * this.SEP;
-    var r = this.right ? this.right.width(ctx) + 2 * this.SEP : this.NO_ELSE_WIDTH;
+    const l = this.left.width(ctx) + 2 * this.SEP;
+    const r = this.right ? this.right.width(ctx) + 2 * this.SEP : this.NO_ELSE_WIDTH;
 
-    return this._width = l + r;
+    this._width = l + r;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height) return this._height;
 
-    var l = this.left.height(ctx);
-    var r = this.right ? this.right.height(ctx) : 0;
+    const l = this.left.height(ctx);
+    const r = this.right ? this.right.height(ctx) : 0;
 
-    return this._height = Math.max(l, r) + this.ROOF_HEIGHT + 2 * this.SEP;
+    this._height = Math.max(l, r) + this.ROOF_HEIGHT + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -98,12 +99,12 @@ Distructure.Switch.prototype = {
   className: "Switch",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
-    var r = this.ROOF_HEIGHT;
-    var ch = fontHeight + 2 * this.CONDITION_SEP;
-    var w2 = w / 2;
-    var sep = this.SEP;
+    const w = this.width(ctx);
+    const h = this.height(ctx);
+    const r = this.ROOF_HEIGHT;
+    const ch = fontHeight + 2 * this.CONDITION_SEP;
+    const w2 = w / 2;
+    const sep = this.SEP;
 
     ctx.moveTo(0, r);
     ctx.lineTo(w2, 0);
@@ -116,10 +117,9 @@ Distructure.Switch.prototype = {
     ctx.textBaseline = 'bottom';
     ctx.fillText(this.text, w / 2, r - this.BASE_LINE);
 
-    var x = 0;
-    for (var i = 0; i < this.cases.length; i++) {
-      var c = this.cases[i];
-      var dx = c.block.width(ctx) + 2 * sep
+    let x = 0;
+    for (const c of this.cases) {
+      const dx = c.block.width(ctx) + 2 * sep
       ctx.moveTo(x, r + ch);
       ctx.lineTo(x + dx, r + ch);
       ctx.lineTo(x + dx, r);
@@ -140,9 +140,8 @@ Distructure.Switch.prototype = {
     ctx.stroke();
 
     x = 0;
-    for (var i = 0; i < this.cases.length; i++) {
-      var c = this.cases[i];
-      var dx = c.block.width(ctx) + 2 * sep
+    for (const c of this.cases) {
+      const dx = c.block.width(ctx) + 2 * sep
 
       ctx.save();
       ctx.translate(x + sep, r + ch + sep);
@@ -163,21 +162,22 @@ Distructure.Switch.prototype = {
   width: function (ctx) {
     if (this._width) return this._width;
 
-    var w = 0;
-    for (var i = this.cases.length - 1; i >= 0; i--) {
+    let w = 0;
+    for (let i = this.cases.length - 1; i >= 0; i--) {
       w += this.cases[i].block.width(ctx) + 2 * this.SEP;
     };
 
     w += this.defaultBlock ? this.defaultBlock.width(ctx) + 2 * this.SEP : this.NO_DEFAULT_WIDTH;
 
-    return this._width = w;
+    this._width = w;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height) return this._height;
 
-    var h = this.defaultBlock ? this.defaultBlock.height(ctx) : 0;
+    let h = this.defaultBlock ? this.defaultBlock.height(ctx) : 0;
 
-    for (var i = this.cases.length - 1; i >= 0; i--) {
+    for (let i = this.cases.length - 1; i >= 0; i--) {
       h = Math.max(this.cases[i].block.height(ctx), h);
     };
 
@@ -185,7 +185,8 @@ Distructure.Switch.prototype = {
       h += fontHeight + 2 * this.CONDITION_SEP;
     }
 
-    return this._height = h + this.ROOF_HEIGHT + 2 * this.SEP;
+    this._height = h + this.ROOF_HEIGHT + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -199,10 +200,10 @@ Distructure.For.prototype = {
   className: "For",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
-    var r = fontHeight + 2 * this.ROOF_SEP;
-    var sep = this.SEP;
+    const w = this.width(ctx);
+    const h = this.height(ctx);
+    const r = fontHeight + 2 * this.ROOF_SEP;
+    const sep = this.SEP;
 
     ctx.moveTo(w, r);
     ctx.lineTo(0, r);
@@ -225,13 +226,15 @@ Distructure.For.prototype = {
   width: function (ctx) {
     if (this._width) return this._width;
 
-    return this._width = this.block.width(ctx) + 2 * this.SEP;
+    this._width = this.block.width(ctx) + 2 * this.SEP;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height) return this._height;
 
     const roofHeight = fontHeight + 2 * this.ROOF_SEP;
-    return this._height = this.block.height(ctx) + roofHeight + 2 * this.SEP;
+    this._height = this.block.height(ctx) + roofHeight + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -274,13 +277,15 @@ Distructure.Until.prototype = {
   width: function (ctx) {
     if (this._width) return this._width;
 
-    return this._width = this.block.width(ctx) + 2 * this.SEP;
+    this._width = this.block.width(ctx) + 2 * this.SEP;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height) return this._height;
 
     const r = fontHeight + 2 * this.ROOF_SEP;
-    return this._height = this.block.height(ctx) + r + 2 * this.SEP;
+    this._height = this.block.height(ctx) + r + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -306,12 +311,14 @@ Distructure.Tag.prototype = {
   },
   width: function (ctx) {
     if (this._width) return this._width;
-    return this._width = Math.max(ctx.measureText(this.text).width, fontHeight) + 2 * this.SEP | 0;
+    this._width = Math.max(ctx.measureText(this.text).width, fontHeight) + 2 * this.SEP | 0;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height) return this._height;
 
-    return this._height = this.width(ctx);
+    this._height = this.width(ctx);
+    return this._height;
   }
 }
 
@@ -358,12 +365,14 @@ Distructure.Instruction.prototype = {
   width: function (ctx) {
     if (this._width && this._ctx_width == ctx) return this._width;
     this._ctx_width = ctx;
-    return this._width = ctx.measureText(this.text).width + 2 * this.SEP;
+    this._width = ctx.measureText(this.text).width + 2 * this.SEP;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height && this._ctx_height == ctx) return this._height;
     this._ctx_height = ctx;
-    return this._height = fontHeight + 2 * this.SEP;
+    this._height = fontHeight + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -377,9 +386,9 @@ Distructure.Function.prototype = {
   className: "Function",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
-    var f = this.FSEP;
+    const w = this.width(ctx);
+    const h = this.height(ctx);
+    const f = this.FSEP;
 
     ctx.strokeRect(0, 0, w, h)
     ctx.moveTo(f, 0);
@@ -395,13 +404,15 @@ Distructure.Function.prototype = {
   width: function (ctx) {
     if (this._width && this._ctx_width == ctx) return this._width;
     this._ctx_width = ctx;
-    return this._width = ctx.measureText(this.text).width + 2 * this.SEP + 2 * this.FSEP;
+    this._width = ctx.measureText(this.text).width + 2 * this.SEP + 2 * this.FSEP;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height && this._ctx_height == ctx) return this._height;
     this._ctx_height = ctx;
 
-    return this._height = fontHeight + 2 * this.SEP;
+    this._height = fontHeight + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -415,9 +426,9 @@ Distructure.Cin.prototype = {
   className: "Cin",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
-    var f = this.FSEP;
+    const w = this.width(ctx);
+    const h = this.height(ctx);
+    const f = this.FSEP;
 
     ctx.moveTo(0, 0);
     ctx.lineTo(w, 0);
@@ -433,13 +444,15 @@ Distructure.Cin.prototype = {
   width: function (ctx) {
     if (this._width && this._ctx_width == ctx) return this._width;
     this._ctx_width = ctx;
-    return this._width = ctx.measureText(this.text).width + 2 * this.SEP + 2 * this.FSEP;
+    this._width = ctx.measureText(this.text).width + 2 * this.SEP + 2 * this.FSEP;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height && this._ctx_height == ctx) return this._height;
     this._ctx_height = ctx;
 
-    return this._height = fontHeight + 2 * this.SEP;
+    this._height = fontHeight + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -453,9 +466,9 @@ Distructure.Cout.prototype = {
   className: "Cout",
   render: function (ctx) {
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
-    var f = this.FSEP;
+    const w = this.width(ctx);
+    const h = this.height(ctx);
+    const f = this.FSEP;
 
     ctx.moveTo(f, 0);
     ctx.lineTo(w - f, 0);
@@ -471,13 +484,15 @@ Distructure.Cout.prototype = {
   width: function (ctx) {
     if (this._width && this._ctx_width == ctx) return this._width;
     this._ctx_width = ctx;
-    return this._width = ctx.measureText(this.text).width + 2 * this.SEP + 2 * this.FSEP;
+    this._width = ctx.measureText(this.text).width + 2 * this.SEP + 2 * this.FSEP;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height && this._ctx_height == ctx) return this._height;
     this._ctx_height = ctx;
 
-    return this._height = fontHeight + 2 * this.SEP;
+    this._height = fontHeight + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -491,7 +506,8 @@ Distructure.EmptyLine.prototype = {
     return this.height();
   },
   height: function (ctx) {
-    return this._height = fontHeight + 2 * this.SEP;
+    this._height = fontHeight + 2 * this.SEP;
+    return this._height;
   }
 }
 
@@ -504,17 +520,15 @@ Distructure.Block.prototype = {
 
     ctx.save()
 
-    var w = this.width(ctx);
-    var h = this.height(ctx);
+    const w = this.width(ctx);
 
-    var y = 0, dy = 0;
-    var x = 0;
+    let y = 0, dy = 0;
+    let x = 0;
 
-    for (var i = 0; i < this.children.length; i++) {
-      var c = this.children[i];
-      var cw = c.width(ctx);
-      var ch = c.height(ctx);
-      var dx = (w - cw) / 2 - x;
+    for (const c of this.children) {
+      const cw = c.width(ctx);
+      const ch = c.height(ctx);
+      const dx = (w - cw) / 2 - x;
 
       ctx.translate(dx, dy);
 
@@ -529,14 +543,14 @@ Distructure.Block.prototype = {
 
   },
   makeSameSize: function (ctx) {
-    var sameSizeClass = { 'Instruction': true, 'Function': true, 'Cout': true, 'Cin': true };
-    var w = 0;
-    var last = this.children.length - 1;
-    var j = -1;
-    var j1 = -1;
-    for (var i = 0; i <= last; ++i) {
-      var c = this.children[i];
-      var s = sameSizeClass[c.className];
+    const sameSizeClass = { 'Instruction': true, 'Function': true, 'Cout': true, 'Cin': true };
+    let w = 0;
+    const last = this.children.length - 1;
+    let j = -1;
+    let j1 = -1;
+    for (let i = 0; i <= last; ++i) {
+      const c = this.children[i];
+      const s = sameSizeClass[c.className];
       if (s) {
         w = Math.max(c.width(ctx), w);
         j1 = i;
@@ -556,24 +570,26 @@ Distructure.Block.prototype = {
   width: function (ctx) {
     if (this._width) return this._width;
 
-    var w = 0;
-    for (var i = 0; i < this.children.length; ++i) {
-      w = Math.max(this.children[i].width(ctx), w);
+    let w = 0;
+    for (const child of this.children) {
+      w = Math.max(child.width(ctx), w);
     }
 
     this.makeSameSize(ctx);
 
-    return this._width = w;
+    this._width = w;
+    return this._width;
   },
   height: function (ctx) {
     if (this._height) return this._height;
 
-    var h = 0;
-    for (var i = 0; i < this.children.length; ++i) {
-      h += this.children[i].height(ctx);
+    let h = 0;
+    for (const child of this.children) {
+      h += child.height(ctx);
     }
 
-    return this._height = h;
+    this._height = h;
+    return this._height;
   }
 }
 
@@ -694,13 +710,12 @@ function parse(codeBlock) {
 
 
 function render(code) {
-  var elem = parse(code);
+  const elem = parse(code);
 
-  var dpr = window.devicePixelRatio || 1;
-  var rect = canvas.getBoundingClientRect();
-  var cw = Math.ceil(rect.width);
-  // var ch = elem.height(ctx);
-  var ch = Math.ceil(rect.height);
+  const dpr = window.devicePixelRatio || 1;
+  const rect = canvas.getBoundingClientRect();
+  const cw = Math.ceil(rect.width);
+  const ch = Math.ceil(rect.height);
   canvas.style.width = `${cw}px`;
   canvas.style.height = `${ch}px`;
   canvas.width = cw * dpr;
@@ -737,7 +752,7 @@ function render(code) {
   const elemWidth = Math.ceil(elem.width(ctx) + 2 * margin);
   const elemHeight = Math.ceil(elem.height(ctx) + 2 * margin);
 
-  if (elemWidth !== cw || elemHeight !== ch) {
+  if (Math.abs(elemWidth - cw) >= 2 || Math.abs(elemHeight - ch) >= 2 ) {
     // increase canvas size
     const newWidth = elemWidth;
     const newHeight = elemHeight;
@@ -745,22 +760,22 @@ function render(code) {
     canvas.style['min-height'] = `${newHeight}px`;
     canvas.style['max-width'] = `${newWidth}px`;
     canvas.style['max-height'] = `${newHeight}px`;
-    render(code);
+    setTimeout(() => render(code));
     return;
   }
 
   elem.render(ctx);
 }
 
-var getTextHeight = function (ctx) {
-  var font = ctx.font;
-  var text = '<span style="font-family:' + font + '">Hg</span>';
+const getTextHeight = function (ctx) {
+  const font = ctx.font;
+  const text = '<span style="font-family:' + font + '">Hg</span>';
 
-  var content = document.createElement('div');
+  const content = document.createElement('div');
   content.innerHTML = text;
 
   document.body.appendChild(content);
-  var height = content.clientHeight;
+  const height = content.clientHeight;
   document.body.removeChild(content);
 
   return height;
